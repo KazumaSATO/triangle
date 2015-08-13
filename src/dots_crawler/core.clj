@@ -6,6 +6,8 @@
   (:import (org.apache.http.impl.client HttpClients)
            (org.apache.http.client HttpClient)
            (org.apache.http.client.methods HttpGet)
+           (java.nio.file Files)
+           (java.nio.file Paths)
            (org.apache.http HttpEntity)))
 
 (def 
@@ -27,13 +29,25 @@
   ))
 
 (defn fetch-img-urls [ids]
-  (let [pages (map #(str (:show urls) "/" %) ids)
-        gets (map #(new HttpGet %) pages)
-        entities (map #(. (. (client) execute %) getEntity) gets)
-        contents (map #(. % getContent) entities)
-        tags (map #(-> (html/html-resource %) (html/select [(html/id= "highres")]) first) contents)
+  (let [pages (map (fn [i] {:id i, :page (str (:show urls) "/" i)}) ids)
+        gets (map (fn [i] {:id (:id i), :get (new HttpGet (:page i))}) pages)
+        entities (map (fn [i] {:id (:id i), :entity (. (. (client) execute (:get i)) getEntity)}) gets)
+        contents (map (fn [i] {:id (:id i), :content (. (:entity i) getContent)}) entities)
+        tags (map (fn [i] {:id (:id i), :tag (-> (html/html-resource (:content i)) (html/select [(html/id= "highres")]) first)})  contents)
         ]
-    (map #(str "https:" (get-in % [:attrs :href]) tags))))
+    (map (fn [i] {:id (:id i), :url (str "https:" (get-in (:tag i) [:attrs :href]))}) tags)))
+
+(defn retrieve [id-url-list dst]
+  (map #(let [img-id (:id %)
+              img-url (:url %)
+              entity  (. (. (client) execute (new HttpGet img-url)) getEntity)
+              content (. entity getContent)
+              ext (subs (. (. entity getContentType) getValue) 6)
+              img-file (Paths/get dst (into-array [(str img-id "." ext) ]))
+              ] 
+          (io/copy content (. img-file toFile))
+         ) 
+       id-url-list))
 
 (defn -main []
   (fetch-target-ids))
