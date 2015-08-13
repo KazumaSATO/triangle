@@ -8,20 +8,32 @@
            (org.apache.http.client.methods HttpGet)
            (org.apache.http HttpEntity)))
 
-(defn hoge []
-  (let [^HttpClient client (. HttpClients createDefault)
-        ^HttpGet target (new HttpGet (-> (p/properties->map (-> (io/resource "keys.properties") p/load-from) true) :root))
-        ^HttpEntity  entity (. (. client execute target) getEntity)
+(def 
+  ^{:doc "keys: root, index"}
+  urls (p/properties->map (-> (io/resource "keys.properties") p/load-from) true))
+
+(defn
+  ^{:doc "client"}
+  client [] (. HttpClients createDefault))
+
+(defn fetch-target-ids []
+  ""
+  (let [^HttpGet target (new HttpGet (:index urls))
+        ^HttpEntity  entity (. (. (client) execute target) getEntity)
         haha (-> (html/html-resource (. entity getContent))
                (html/select [:span [:a (html/attr-starts :href "/post")]]))
         ]
-    (doseq [img haha]
-        (println (get-in img [:attrs :href]))))
-  )
-  
-(defn fetch-url [url]
-  (let [^java.net.URL raw (java.net.URL. url)]
-  (html/html-resource raw)))
+  (map #(-> (re-seq #"\d+" (get-in % [:attrs :href])) first) haha)
+  ))
+
+(defn fetch-img-urls [ids]
+  (let [pages (map #(str (:show urls) "/" %) ids)
+        gets (map #(new HttpGet %) pages)
+        entities (map #(. (. (client) execute %) getEntity) gets)
+        contents (map #(. % getContent) entities)
+        tags (map #(-> (html/html-resource %) (html/select [(html/id= "highres")]) first) contents)
+        ]
+    (map #(str "https:" (get-in % [:attrs :href]) tags))))
 
 (defn -main []
-  (fetch-url base-url))
+  (fetch-target-ids))
