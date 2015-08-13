@@ -1,0 +1,8 @@
+.classpath
+.project
+.settings
+bin
+.nrepl-port
+target
+resources/keys.properties
+*.swp
