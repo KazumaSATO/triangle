@@ -8,4 +8,6 @@
                  [enlive "1.1.6"]
                  [org.apache.httpcomponents/httpclient "4.5"]
                  [clojurewerkz/propertied "1.2.0"]
+                 [korma "0.4.0"] ; database connection
+                 [mysql/mysql-connector-java "5.1.36"]
                  ])
