@@ -1,4 +1,4 @@
-(ns dots-crawler.core-test
+(ns triangle.core-test
   (:require [clojure.test :refer :all]
             [dots-crawler.core :refer :all]))
 
