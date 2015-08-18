@@ -38,6 +38,8 @@
     (map (fn [i] {:id (:id i), :url (str "https:" (get-in (:tag i) [:attrs :href]))}) tags)))
 
 (defn retrieve [id-url-list dst]
+  ; TODO deconstruct dorun do all
+  ; TODO return {:id "", :url "", :file-size ""}
   (map #(let [img-id (:id %)
               img-url (:url %)
               entity  (. (. (client) execute (new HttpGet img-url)) getEntity)
