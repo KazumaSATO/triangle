@@ -1,7 +1,10 @@
 (ns triangle.core-test
-  (:require [clojure.test :refer :all]
-            [dots-crawler.core :refer :all]))
+  (:require [clojure.test :as test]
+            [triangle.core :as core]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+;;; feature 1 index offset limit ignore_cache(default false)
+;;; feature 1 index only unretrieved
+;;; feature 2 query input ignore_cache (default false)
+;; As a .., I want to .. so that I can ...
+(test/testing "As a user, I want to retrieve latest uploaded images so that I save time and effort"
+              )
