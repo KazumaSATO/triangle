@@ -1,7 +1,8 @@
 (ns triangle.core
   (:require [net.cgrand.enlive-html :as html]
             [clojurewerkz.propertied.properties :as p]
-            [clojure.java.io :as io])
+            [clojure.java.io :as io]
+            [clojure.tools.cli :as cli])
   (:use [clojure.repl])
   (:import (org.apache.http.impl.client HttpClients)
            (org.apache.http.client HttpClient)
@@ -9,6 +10,17 @@
            (java.nio.file Files)
            (java.nio.file Paths)
            (org.apache.http HttpEntity)))
+
+
+(defn- create-request [& args]
+  (cli/parse-opts args 
+                  [["-o" "--offset NUMBER" "offset page number"
+                    :default 0
+                    :parse-fn #(Integer/parseInt %)]
+                   ["-l" "--limit NUMBER" "limit page number"
+                    :default 1000
+                    :parse-fn #(Integer/parseInt %)]
+                   ]))
 
 (def 
   ^{:doc "keys: root, index"}

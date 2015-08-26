@@ -10,4 +10,4 @@
                  [clojurewerkz/propertied "1.2.0"]
                  [korma "0.4.0"] ; database connection
                  [mysql/mysql-connector-java "5.1.36"]
-                 ])
+                 [org.clojure/tools.cli "0.3.3"]])
