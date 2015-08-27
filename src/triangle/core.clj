@@ -13,14 +13,16 @@
 
 
 (defn- create-request [& args]
-  (cli/parse-opts args 
-                  [["-o" "--offset NUMBER" "offset page number"
-                    :default 0
-                    :parse-fn #(Integer/parseInt %)]
-                   ["-l" "--limit NUMBER" "limit page number"
-                    :default 1000
-                    :parse-fn #(Integer/parseInt %)]
-                   ]))
+  (let [{:keys [options arguments errors]} (cli/parse-opts args 
+                                                            [["-o" "--offset NUMBER" "offset page number"
+                                                              :default 0
+                                                              :parse-fn #(Integer/parseInt %)]
+                                                             ["-l" "--limit NUMBER" "limit page number"
+                                                              :default 1000
+                                                              :parse-fn #(Integer/parseInt %)]
+                                                             ["-d" "--duplicate" "ignore retrieved signs"]
+                                                             ])]
+    [options arguments errors]))
 
 (def 
   ^{:doc "keys: root, index"}
