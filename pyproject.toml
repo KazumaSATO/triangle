@@ -1,0 +1,16 @@
+[project]
+name = "marketcap"
+version = "0.0.1"
+dependencies = [
+  "fastapi",
+  "uvicorn",
+  "PyMySQL",
+  "python-lsp-black"
+]
+
+[project.optional-dependencies]
+dev = ["python-lsp-server[all]"]
+[build-system]
+requires = ["setuptools"]
+[pylsp.plugins.black]
+  enabled=true
